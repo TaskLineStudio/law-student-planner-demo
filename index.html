@@ -1,0 +1,1974 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A read-only interactive demonstration of the Bench & Brief law student planner using fictional data.">
+  <meta name="color-scheme" content="light">
+  <title>Bench &amp; Brief | Interactive Fictional Demo</title>
+  <style>
+    :root {
+      --navy: #102945;
+      --navy-soft: #1b3a5c;
+      --paper: #f6f2eb;
+      --card: #fffdf9;
+      --ink: #17263b;
+      --muted: #697386;
+      --line: #e6dfd4;
+      --burgundy: #963d4a;
+      --sage: #6f9680;
+      --gold: #c89a46;
+      --blue: #5478ad;
+      --shadow: 0 12px 32px rgba(33, 43, 57, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--paper);
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 76% -10%, rgba(200, 154, 70, 0.13), transparent 28rem),
+        var(--paper);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid rgba(47, 107, 87, 0.42);
+      outline-offset: 2px;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 245px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, #0d2743, #112f50);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 26px 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      z-index: 4;
+    }
+
+    .brand {
+      align-items: center;
+      background: transparent;
+      border: 0;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      gap: 12px;
+      padding: 0 8px 24px;
+      text-align: left;
+    }
+
+    .brand-mark {
+      align-items: center;
+      border: 1px solid rgba(226, 190, 113, 0.75);
+      border-radius: 12px;
+      color: #e2be71;
+      display: flex;
+      font-family: Georgia, serif;
+      font-size: 1.1rem;
+      height: 44px;
+      justify-content: center;
+      width: 44px;
+    }
+
+    .brand strong,
+    .brand small {
+      display: block;
+    }
+
+    .brand strong {
+      font-family: Georgia, serif;
+      font-size: 1.02rem;
+    }
+
+    .brand small {
+      color: #b8c7d6;
+      margin-top: 3px;
+    }
+
+    nav {
+      display: grid;
+      gap: 5px;
+    }
+
+    nav button {
+      align-items: center;
+      background: transparent;
+      border: 0;
+      border-radius: 10px;
+      color: #dce6ee;
+      cursor: pointer;
+      display: flex;
+      gap: 12px;
+      padding: 11px 12px;
+      text-align: left;
+      width: 100%;
+    }
+
+    nav button:hover,
+    nav button.active {
+      background: rgba(255, 255, 255, 0.11);
+      color: white;
+    }
+
+    nav button.active {
+      box-shadow: inset 3px 0 #e2be71;
+    }
+
+    nav button span {
+      color: #e2be71;
+      text-align: center;
+      width: 18px;
+    }
+
+    .sidebar-note {
+      border: 1px solid rgba(226, 190, 113, 0.24);
+      border-radius: 12px;
+      color: #dce6ee;
+      margin-top: auto;
+      padding: 14px;
+    }
+
+    .sidebar-note strong,
+    .sidebar-note small {
+      display: block;
+    }
+
+    .sidebar-note small {
+      color: #afc1d1;
+      line-height: 1.45;
+      margin-top: 5px;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    .demo-banner {
+      align-items: center;
+      background: #f0dfb5;
+      border-bottom: 1px solid #dfc47f;
+      color: #4f3d1f;
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      min-height: 44px;
+      padding: 9px 34px;
+    }
+
+    .demo-banner strong {
+      letter-spacing: 0.03em;
+    }
+
+    .demo-banner span {
+      color: #725d33;
+      font-size: 0.88rem;
+    }
+
+    .topbar {
+      align-items: center;
+      background: rgba(246, 242, 235, 0.9);
+      border-bottom: 1px solid rgba(225, 217, 205, 0.8);
+      display: flex;
+      gap: 18px;
+      min-height: 72px;
+      padding: 14px 34px;
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(12px);
+      z-index: 3;
+    }
+
+    .search {
+      flex: 1;
+      max-width: 590px;
+      position: relative;
+    }
+
+    .search input {
+      background: white;
+      border: 1px solid #d9d2c7;
+      border-radius: 11px;
+      color: var(--ink);
+      padding: 11px 14px 11px 38px;
+      width: 100%;
+    }
+
+    .search::before {
+      content: "⌕";
+      color: var(--muted);
+      font-size: 1.25rem;
+      left: 13px;
+      position: absolute;
+      top: 8px;
+    }
+
+    .search-results {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      left: 0;
+      max-height: 320px;
+      overflow: auto;
+      padding: 7px;
+      position: absolute;
+      right: 0;
+      top: 49px;
+      z-index: 10;
+    }
+
+    .search-results button {
+      background: transparent;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      display: block;
+      padding: 9px 10px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .search-results button:hover {
+      background: #f4f1eb;
+    }
+
+    .search-results strong,
+    .search-results small {
+      display: block;
+    }
+
+    .search-results small {
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .read-only-pill {
+      background: #e5eee9;
+      border: 1px solid #c7d9cf;
+      border-radius: 999px;
+      color: #315d4c;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 8px 12px;
+      white-space: nowrap;
+    }
+
+    .page {
+      margin: 0 auto;
+      max-width: 1500px;
+      padding: 32px 34px 54px;
+    }
+
+    .page-head {
+      align-items: end;
+      display: flex;
+      gap: 20px;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      color: var(--burgundy);
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      margin-bottom: 7px;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 3vw, 3rem);
+      margin-bottom: 8px;
+    }
+
+    .page-head p {
+      color: var(--muted);
+      margin-bottom: 0;
+      max-width: 720px;
+    }
+
+    .secondary,
+    .primary,
+    .text-button {
+      border-radius: 9px;
+      cursor: pointer;
+      font-weight: 700;
+      padding: 10px 14px;
+    }
+
+    .primary {
+      background: var(--navy);
+      border: 1px solid var(--navy);
+      color: white;
+    }
+
+    .secondary {
+      background: white;
+      border: 1px solid #d5cec2;
+    }
+
+    .text-button {
+      background: transparent;
+      border: 0;
+      color: var(--burgundy);
+      padding: 4px;
+    }
+
+    .focus-card {
+      align-items: center;
+      background: linear-gradient(120deg, #173655, #0f2945);
+      border-radius: 17px;
+      box-shadow: 0 18px 38px rgba(15, 41, 69, 0.19);
+      color: white;
+      display: flex;
+      gap: 24px;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      overflow: hidden;
+      padding: 25px 28px;
+      position: relative;
+    }
+
+    .focus-card::after {
+      background: rgba(226, 190, 113, 0.13);
+      border-radius: 50%;
+      content: "";
+      height: 210px;
+      position: absolute;
+      right: -75px;
+      top: -90px;
+      width: 210px;
+    }
+
+    .focus-card .eyebrow {
+      color: #e2be71;
+    }
+
+    .focus-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 7px;
+    }
+
+    .focus-card p {
+      color: #c8d5e1;
+      margin-bottom: 0;
+    }
+
+    .focus-card button {
+      background: white;
+      border: 0;
+      border-radius: 9px;
+      color: var(--navy);
+      cursor: pointer;
+      font-weight: 800;
+      padding: 11px 15px;
+      position: relative;
+      white-space: nowrap;
+      z-index: 1;
+    }
+
+    .summary-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-bottom: 18px;
+    }
+
+    .summary-card,
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .summary-card {
+      border-radius: 14px;
+      min-height: 126px;
+      padding: 20px;
+    }
+
+    .summary-card small,
+    .summary-card strong,
+    .summary-card em {
+      display: block;
+    }
+
+    .summary-card small {
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .summary-card strong {
+      font-family: Georgia, serif;
+      font-size: 1.3rem;
+      line-height: 1.15;
+      margin: 13px 0 7px;
+    }
+
+    .summary-card em {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-style: normal;
+    }
+
+    .dashboard-grid,
+    .two-column {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.75fr);
+    }
+
+    .panel {
+      border-radius: 15px;
+      margin-bottom: 18px;
+      padding: 20px;
+    }
+
+    .panel-head {
+      align-items: center;
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .panel-head h2 {
+      font-size: 1.15rem;
+      margin: 0;
+    }
+
+    .panel-context {
+      color: var(--muted);
+      font-size: 0.76rem;
+    }
+
+    .chart-wrap {
+      height: 235px;
+      position: relative;
+    }
+
+    #weekly-chart {
+      display: block;
+      height: 100%;
+      width: 100%;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .bar-row {
+      align-items: center;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: minmax(90px, 130px) 1fr 52px;
+    }
+
+    .bar-row > span {
+      font-size: 0.82rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .bar-track {
+      background: #eeeae3;
+      border-radius: 999px;
+      height: 9px;
+      overflow: hidden;
+    }
+
+    .bar-track i {
+      border-radius: inherit;
+      display: block;
+      height: 100%;
+    }
+
+    .bar-row strong {
+      font-size: 0.78rem;
+      text-align: right;
+    }
+
+    .goal-layout {
+      align-items: center;
+      display: flex;
+      gap: 22px;
+      justify-content: center;
+      min-height: 190px;
+    }
+
+    .goal-ring {
+      align-items: center;
+      border-radius: 50%;
+      display: flex;
+      height: 125px;
+      justify-content: center;
+      position: relative;
+      width: 125px;
+    }
+
+    .goal-ring::before {
+      background: var(--card);
+      border-radius: 50%;
+      content: "";
+      height: 88px;
+      position: absolute;
+      width: 88px;
+    }
+
+    .goal-ring span {
+      position: relative;
+      text-align: center;
+    }
+
+    .goal-ring strong,
+    .goal-ring small {
+      display: block;
+    }
+
+    .goal-ring strong {
+      font-family: Georgia, serif;
+      font-size: 1.45rem;
+    }
+
+    .goal-layout p {
+      color: var(--muted);
+      margin: 0;
+      max-width: 170px;
+    }
+
+    .priority-list,
+    .record-list,
+    .detail-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .priority,
+    .record-row,
+    .detail-trigger {
+      align-items: center;
+      background: #fbf9f5;
+      border: 1px solid #ece6dc;
+      border-radius: 10px;
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      padding: 12px 13px;
+    }
+
+    button.detail-trigger {
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+    }
+
+    .priority i,
+    .record-row i,
+    .detail-trigger i {
+      border-radius: 50%;
+      flex: 0 0 auto;
+      height: 9px;
+      width: 9px;
+    }
+
+    .priority span,
+    .record-row span,
+    .detail-trigger span {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .priority strong,
+    .priority small,
+    .record-row strong,
+    .record-row small,
+    .detail-trigger strong,
+    .detail-trigger small {
+      display: block;
+    }
+
+    .priority small,
+    .record-row small,
+    .detail-trigger small {
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .priority em,
+    .record-row em,
+    .detail-trigger em {
+      color: var(--burgundy);
+      font-size: 0.78rem;
+      font-style: normal;
+      white-space: nowrap;
+    }
+
+    .course-grid,
+    .outline-grid,
+    .brief-grid,
+    .note-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .course-card,
+    .brief-card,
+    .note-card,
+    .outline-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    button.course-card,
+    button.brief-card,
+    button.note-card {
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .course-card .accent {
+      border-radius: 999px;
+      display: block;
+      height: 5px;
+      margin-bottom: 18px;
+      width: 52px;
+    }
+
+    .course-card h2,
+    .brief-card h2,
+    .note-card h2 {
+      font-size: 1.22rem;
+      margin-bottom: 8px;
+    }
+
+    .course-card p,
+    .brief-card p,
+    .note-card p {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .stat-row span,
+    .chip {
+      background: #f1eee8;
+      border-radius: 999px;
+      color: #566170;
+      font-size: 0.73rem;
+      padding: 6px 9px;
+    }
+
+    .filters {
+      align-items: end;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .filters label {
+      color: var(--muted);
+      display: grid;
+      font-size: 0.75rem;
+      gap: 5px;
+    }
+
+    .filters select {
+      background: white;
+      border: 1px solid #d9d2c7;
+      border-radius: 9px;
+      color: var(--ink);
+      min-width: 160px;
+      padding: 9px 11px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 13px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    td button {
+      background: transparent;
+      border: 0;
+      color: var(--navy);
+      cursor: pointer;
+      font-weight: 750;
+      padding: 0;
+      text-align: left;
+    }
+
+    .status {
+      border-radius: 999px;
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 5px 8px;
+    }
+
+    .status.complete,
+    .status.reviewed {
+      background: #e4eee8;
+      color: #315d4c;
+    }
+
+    .status.overdue,
+    .status.needs-review {
+      background: #f5e4e7;
+      color: #8d3040;
+    }
+
+    .status.upcoming,
+    .status.in-progress,
+    .status.reading {
+      background: #f4ecd9;
+      color: #75591e;
+    }
+
+    .workspace-tabs {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 17px;
+    }
+
+    .workspace-tabs button {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      cursor: pointer;
+      padding: 9px 13px;
+    }
+
+    .workspace-tabs button[aria-selected="true"] {
+      background: var(--navy);
+      color: white;
+    }
+
+    .outline-card h2 {
+      font-size: 1.15rem;
+    }
+
+    .topic-row {
+      border-top: 1px solid var(--line);
+      padding: 12px 0;
+    }
+
+    .topic-row:first-of-type {
+      border-top: 0;
+    }
+
+    .topic-row strong,
+    .topic-row small {
+      display: block;
+    }
+
+    .topic-row small {
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .study-summary {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 19px;
+    }
+
+    .metric span,
+    .metric strong,
+    .metric small {
+      display: block;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 750;
+      text-transform: uppercase;
+    }
+
+    .metric strong {
+      font-family: Georgia, serif;
+      font-size: 1.65rem;
+      margin: 10px 0 5px;
+    }
+
+    .metric small {
+      color: var(--muted);
+    }
+
+    .calendar-layout {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.6fr);
+    }
+
+    .calendar-head {
+      align-items: center;
+      display: flex;
+      gap: 10px;
+    }
+
+    .calendar-head button {
+      background: white;
+      border: 1px solid #d8d1c6;
+      border-radius: 8px;
+      cursor: pointer;
+      padding: 6px 9px;
+    }
+
+    .weekdays,
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+
+    .weekdays span {
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 7px;
+      text-align: center;
+    }
+
+    .calendar-day {
+      background: white;
+      border: 1px solid #ece6dd;
+      min-height: 108px;
+      padding: 7px;
+    }
+
+    .calendar-day.outside {
+      background: #f6f3ee;
+      color: #9a9da3;
+    }
+
+    .calendar-day.today {
+      box-shadow: inset 0 0 0 2px var(--gold);
+    }
+
+    .calendar-day > strong {
+      display: block;
+      font-size: 0.75rem;
+      margin-bottom: 5px;
+    }
+
+    .calendar-item {
+      background: #e8f0ec;
+      border: 0;
+      border-radius: 5px;
+      color: #315d4c;
+      cursor: pointer;
+      display: block;
+      font-size: 0.66rem;
+      margin-top: 4px;
+      overflow: hidden;
+      padding: 4px 5px;
+      text-align: left;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+    }
+
+    .agenda {
+      display: grid;
+      gap: 9px;
+    }
+
+    .agenda button {
+      align-items: center;
+      background: #fbf9f5;
+      border: 1px solid #ece6dc;
+      border-radius: 10px;
+      cursor: pointer;
+      display: grid;
+      gap: 11px;
+      grid-template-columns: 45px 1fr;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .agenda time {
+      color: var(--burgundy);
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .agenda strong,
+    .agenda small {
+      display: block;
+    }
+
+    .agenda small {
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .about-grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .about-grid .panel p,
+    .about-grid .panel li {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .about-grid ul {
+      padding-left: 19px;
+    }
+
+    .cta {
+      background: linear-gradient(120deg, #173655, #0f2945);
+      border-radius: 16px;
+      color: white;
+      grid-column: 1 / -1;
+      padding: 26px;
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-size: 1.45rem;
+      margin-bottom: 8px;
+    }
+
+    .cta p {
+      color: #c8d5e1;
+    }
+
+    .cta button {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 9px;
+      color: #dce6ee;
+      cursor: not-allowed;
+      padding: 10px 15px;
+    }
+
+    .empty {
+      color: var(--muted);
+      padding: 35px 12px;
+      text-align: center;
+    }
+
+    .modal-backdrop {
+      align-items: center;
+      background: rgba(7, 20, 34, 0.58);
+      display: flex;
+      inset: 0;
+      justify-content: center;
+      padding: 22px;
+      position: fixed;
+      z-index: 20;
+    }
+
+    .modal {
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.25);
+      max-height: min(720px, 88vh);
+      max-width: 680px;
+      overflow: auto;
+      padding: 24px;
+      width: 100%;
+    }
+
+    .modal-head {
+      align-items: start;
+      display: flex;
+      gap: 18px;
+      justify-content: space-between;
+    }
+
+    .modal-head h2 {
+      margin-bottom: 4px;
+    }
+
+    .modal-head button {
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+
+    .modal-message {
+      background: #f2ece0;
+      border-left: 3px solid var(--gold);
+      color: #655632;
+      line-height: 1.5;
+      margin: 16px 0;
+      padding: 11px 13px;
+    }
+
+    .modal dl {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 130px 1fr;
+      margin-bottom: 0;
+    }
+
+    .modal dt {
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .modal dd {
+      line-height: 1.5;
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .visually-hidden {
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      height: 1px;
+      overflow: hidden;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
+    }
+
+    @media (max-width: 1120px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .dashboard-grid,
+      .two-column,
+      .calendar-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .app {
+        display: block;
+      }
+
+      .sidebar {
+        height: auto;
+        min-height: 0;
+        padding: 14px;
+        position: static;
+      }
+
+      .brand {
+        padding-bottom: 13px;
+      }
+
+      nav {
+        display: flex;
+        overflow-x: auto;
+      }
+
+      nav button {
+        flex: 0 0 auto;
+        width: auto;
+      }
+
+      .sidebar-note {
+        display: none;
+      }
+
+      .topbar {
+        top: 0;
+      }
+
+      .course-grid,
+      .outline-grid,
+      .brief-grid,
+      .note-grid,
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cta {
+        grid-column: auto;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .demo-banner,
+      .topbar,
+      .page {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .demo-banner {
+        align-items: start;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .read-only-pill {
+        display: none;
+      }
+
+      .summary-grid,
+      .study-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .page-head,
+      .focus-card {
+        align-items: start;
+        flex-direction: column;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <button class="brand" type="button" data-view="overview" aria-label="Return to Overview">
+        <span class="brand-mark" aria-hidden="true">B&amp;B</span>
+        <span><strong>Bench &amp; Brief</strong><small>Law student planner demo</small></span>
+      </button>
+      <nav aria-label="Demo screens"></nav>
+      <div class="sidebar-note">
+        <strong>Fictional preview</strong>
+        <small>Explore the layout and connected information. Changes are disabled.</small>
+      </div>
+    </aside>
+    <main>
+      <div class="demo-banner" role="status">
+        <strong>Interactive Demo - Fictional Data</strong>
+        <span>This preview is read-only. The purchased planner opens empty and lets you add your own records.</span>
+      </div>
+      <header class="topbar">
+        <div class="search">
+          <label class="visually-hidden" for="global-search">Search fictional demo records</label>
+          <input id="global-search" type="search" placeholder="Search the fictional demo…" autocomplete="off">
+          <div id="search-results" class="search-results" hidden></div>
+        </div>
+        <span class="read-only-pill">Read-only demo</span>
+      </header>
+      <div id="page" class="page" tabindex="-1"></div>
+    </main>
+  </div>
+  <div id="modal-root"></div>
+
+  <script>
+    "use strict";
+
+    // Add the verified Etsy listing URL here after approval. Leave empty until then.
+    const ETSY_LISTING_URL = "";
+
+    const DAY_MS = 86400000;
+    const localDate = (date = new Date()) => [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, "0"),
+      String(date.getDate()).padStart(2, "0"),
+    ].join("-");
+    const fromOffset = (offset) => {
+      const date = new Date();
+      date.setHours(12, 0, 0, 0);
+      date.setDate(date.getDate() + offset);
+      return localDate(date);
+    };
+    const dateOrdinal = (value) => {
+      const [year, month, day] = value.split("-").map(Number);
+      return Date.UTC(year, month - 1, day) / DAY_MS;
+    };
+    const daysBetween = (from, to) => dateOrdinal(to) - dateOrdinal(from);
+    const today = localDate();
+    const formatDate = (value, options = { day: "numeric", month: "short" }) =>
+      new Intl.DateTimeFormat("en-GB", options).format(new Date(value + "T12:00:00"));
+    const escapeHtml = (value) => String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+    const minutesLabel = (minutes) => Math.floor(minutes / 60) + "h " + minutes % 60 + "m";
+
+    const courses = Object.freeze([
+      { id: "c-contracts", name: "Principles of Agreements", code: "DEMO101", colour: "#963d4a", meeting: "Monday · 10:00", room: "Seminar Room A" },
+      { id: "c-public", name: "Public Institutions", code: "DEMO103", colour: "#6f9680", meeting: "Tuesday · 13:00", room: "Lecture Hall B" },
+      { id: "c-criminal", name: "Foundations of Liability", code: "DEMO105", colour: "#5478ad", meeting: "Thursday · 11:00", room: "Seminar Room C" },
+      { id: "c-skills", name: "Legal Method & Research", code: "DEMO107", colour: "#c89a46", meeting: "Friday · 14:00", room: "Library Lab" },
+    ]);
+
+    const assignments = Object.freeze([
+      { id: "a-1", courseId: "c-contracts", title: "Remedies problem outline", due: fromOffset(-4), status: "upcoming", words: 720, goal: 1800, subtasks: "3 of 5", note: "Fictional planning record; no substantive answer is included." },
+      { id: "a-2", courseId: "c-public", title: "Institutions seminar reflection", due: fromOffset(3), status: "upcoming", words: 410, goal: 1200, subtasks: "2 of 4", note: "Prepare a structure and review course materials." },
+      { id: "a-3", courseId: "c-criminal", title: "Liability practice response", due: fromOffset(9), status: "upcoming", words: 0, goal: 1500, subtasks: "1 of 6", note: "Demonstration assignment with fictional details." },
+      { id: "a-4", courseId: "c-skills", title: "Research trail exercise", due: fromOffset(-9), status: "complete", words: 980, goal: 900, subtasks: "4 of 4", note: "Completed fictional exercise." },
+    ]);
+
+    const assessments = Object.freeze([
+      { id: "as-1", courseId: "c-contracts", title: "Mid-term exercise", due: fromOffset(-12), status: "Graded", weight: 30, score: 68, maximum: 100 },
+      { id: "as-2", courseId: "c-public", title: "Seminar briefing", due: fromOffset(6), status: "Planned", weight: 20 },
+      { id: "as-3", courseId: "c-criminal", title: "Practice analysis", due: fromOffset(-2), status: "Submitted", weight: 25 },
+    ]);
+
+    const readings = Object.freeze([
+      { id: "r-1", courseId: "c-contracts", title: "Fictional reading pack: agreement principles", type: "Course pack", pages: 34, priority: "High", status: "Reading", progress: 60, classDate: fromOffset(1), note: "Review headings and record questions for class." },
+      { id: "r-2", courseId: "c-public", title: "Illustrative institutions article", type: "Article", pages: 22, priority: "Medium", status: "Complete", progress: 100, classDate: fromOffset(-1), note: "Fictional demonstration source; not legal authority." },
+      { id: "r-3", courseId: "c-criminal", title: "Demonstration chapter: liability framework", type: "Textbook", pages: 41, priority: "High", status: "Queued", progress: 0, classDate: fromOffset(4), note: "No substantive legal summary is included." },
+      { id: "r-4", courseId: "c-skills", title: "Database searching practice guide", type: "Skills guide", pages: 18, priority: "Medium", status: "Complete", progress: 100, classDate: fromOffset(-3), note: "Practice recording search terms and relevance notes." },
+      { id: "r-5", courseId: "c-public", title: "Fictional seminar extract B", type: "Course pack", pages: 27, priority: "Low", status: "Queued", progress: 0, classDate: fromOffset(8), note: "Demonstration reading record." },
+    ]);
+
+    const briefs = Object.freeze([
+      { id: "b-1", courseId: "c-contracts", title: "Fictional Case Alpha", structure: "IRAC", status: "Ready", citation: "Demo reference A", issue: "Student-written issue placeholder.", rule: "Student-entered rule placeholder; no legal proposition supplied.", application: "Fictional analysis area shown without substantive content.", conclusion: "Demonstration conclusion placeholder." },
+      { id: "b-2", courseId: "c-public", title: "Fictional Case Beta", structure: "FIRAC", status: "Draft", citation: "Demo reference B", facts: "Neutral fictional facts placeholder.", issue: "Question for the student to identify.", rule: "No substantive legal rule is preloaded.", application: "Demonstration workspace content.", conclusion: "Draft takeaway placeholder." },
+      { id: "b-3", courseId: "c-criminal", title: "Fictional Case Gamma", structure: "IRAC", status: "Draft", citation: "Demo reference C", issue: "Fictional issue label.", rule: "Verify all law independently.", application: "Student analysis would appear here.", conclusion: "No outcome is asserted." },
+    ]);
+
+    const authorities = Object.freeze([
+      { id: "au-1", courseId: "c-contracts", title: "Illustrative Authority Alpha", type: "Fictional case reference", jurisdiction: "Demonstration only", status: "Needs review", note: "No legal conclusion or currency claim." },
+      { id: "au-2", courseId: "c-public", title: "Demo Regulation Reference 12", type: "Fictional regulation", jurisdiction: "Demonstration only", status: "User marked reviewed", note: "Interface example only; not a real citation." },
+      { id: "au-3", courseId: "c-skills", title: "Illustrative Research Article", type: "Fictional article", jurisdiction: "General", status: "Needs review", note: "Minimal neutral metadata for demonstration." },
+    ]);
+
+    const research = Object.freeze([
+      { id: "q-1", courseId: "c-contracts", assignmentId: "a-1", question: "Which sources should be checked for the fictional exercise?", source: "Demonstration database", terms: "remedy AND teaching example", useful: "Illustrative Authority Alpha", date: fromOffset(-2), note: "Relevance note without substantive law." },
+      { id: "q-2", courseId: "c-public", assignmentId: "a-2", question: "How should the seminar search be narrowed?", source: "Library catalogue demo", terms: "institutions AND course material", useful: "Illustrative Research Article", date: fromOffset(-5), note: "Fictional research workflow." },
+      { id: "q-3", courseId: "c-skills", assignmentId: "a-4", question: "Which search terms produced a useful practice result?", source: "Training index", terms: "legal research AND demonstration", useful: "Demo Regulation Reference 12", date: fromOffset(-8), note: "Completed fictional log." },
+    ]);
+
+    const outlineTopics = Object.freeze([
+      { id: "o-1", courseId: "c-contracts", title: "Formation framework", status: "Reviewed", confidence: "Confident", reviewed: fromOffset(-3), note: "Short fictional topic note." },
+      { id: "o-2", courseId: "c-contracts", title: "Remedies structure", status: "In progress", confidence: "Developing", reviewed: fromOffset(-1), note: "Return to the practice checklist." },
+      { id: "o-3", courseId: "c-public", title: "Institutional roles", status: "Reviewed", confidence: "Developing", reviewed: fromOffset(-4), note: "Review class questions." },
+      { id: "o-4", courseId: "c-public", title: "Review standards", status: "Not started", confidence: "Low", reviewed: "", note: "Demonstration topic only." },
+      { id: "o-5", courseId: "c-criminal", title: "Liability elements", status: "In progress", confidence: "Developing", reviewed: fromOffset(-2), note: "Use a self-created checklist." },
+      { id: "o-6", courseId: "c-criminal", title: "Defence structure", status: "Not started", confidence: "Low", reviewed: "", note: "No substantive content supplied." },
+      { id: "o-7", courseId: "c-skills", title: "Search planning", status: "Reviewed", confidence: "Confident", reviewed: fromOffset(-6), note: "Record query changes." },
+      { id: "o-8", courseId: "c-skills", title: "Authority checking", status: "In progress", confidence: "Developing", reviewed: fromOffset(-1), note: "Verify jurisdiction and date." },
+    ]);
+
+    const exams = Object.freeze([
+      { id: "e-1", courseId: "c-criminal", date: fromOffset(17), confidence: 3, pastPapersDone: 2, pastPapersTotal: 5 },
+      { id: "e-2", courseId: "c-contracts", date: fromOffset(31), confidence: 2, pastPapersDone: 1, pastPapersTotal: 4 },
+    ]);
+
+    const sessionPattern = [
+      ["c-contracts", "Reading", 45], ["c-public", "Outline building", 40],
+      ["c-criminal", "Case briefing", 35], ["c-skills", "Legal research", 30],
+      ["c-contracts", "Practice questions", 60], ["c-public", "Reading", 50],
+      ["c-criminal", "Exam review", 55], ["c-skills", "Legal research", 35],
+      ["c-contracts", "Assignment work", 70], ["c-public", "Outline building", 45],
+      ["c-criminal", "Practice questions", 50], ["c-skills", "Reading", 30],
+      ["c-contracts", "Case briefing", 40], ["c-public", "Assignment work", 55],
+      ["c-criminal", "Exam review", 45], ["c-skills", "Legal research", 35],
+      ["c-contracts", "Practice questions", 65], ["c-public", "Reading", 50],
+      ["c-criminal", "Outline building", 40], ["c-skills", "Research review", 30],
+    ];
+    const sessions = Object.freeze(sessionPattern.map((item, index) => ({
+      id: "s-" + (index + 1),
+      courseId: item[0],
+      activity: item[1],
+      minutes: item[2],
+      date: fromOffset(index - 19),
+      status: "Completed",
+      note: "Fictional completed study session.",
+    })));
+
+    const events = Object.freeze([
+      { id: "ev-1", courseId: "c-contracts", title: "Agreements seminar", date: fromOffset(1), type: "Class" },
+      { id: "ev-2", courseId: "c-public", title: "Institutions workshop", date: fromOffset(2), type: "Class" },
+      { id: "ev-3", courseId: "c-skills", title: "Library skills session", date: fromOffset(4), type: "Class" },
+      { id: "ev-4", courseId: "c-criminal", title: "Practice review block", date: fromOffset(6), type: "Study" },
+      { id: "ev-5", title: "Fictional term planning check-in", date: fromOffset(10), type: "Personal" },
+    ]);
+
+    const notes = Object.freeze([
+      { id: "n-1", courseId: "c-contracts", title: "Questions for seminar", body: "Ask how to organise the fictional problem structure. No legal answer is supplied.", updated: fromOffset(-1) },
+      { id: "n-2", courseId: "c-skills", title: "Research process reminder", body: "Record the database, terms used, useful result and why it matters.", updated: fromOffset(-2) },
+      { id: "n-3", title: "Weekly planning note", body: "Choose three priorities and leave room for review.", updated: today },
+    ]);
+
+    const navItems = [
+      ["overview", "Overview", "⌂"],
+      ["today", "Today", "✓"],
+      ["courses", "Courses", "▤"],
+      ["assignments", "Assignments & Assessments", "□"],
+      ["reading", "Reading Queue", "◫"],
+      ["legal", "Case Briefs", "§"],
+      ["outlines", "Outlines", "≡"],
+      ["study", "Study Hub", "◎"],
+      ["calendar", "Calendar", "◇"],
+      ["notes", "Notes", "✎"],
+      ["about", "About this demo", "i"],
+    ];
+
+    const state = {
+      view: "overview",
+      legalTab: "briefs",
+      readingFilter: "All",
+      assignmentFilter: "All",
+      studyCourse: "All",
+      studyActivity: "All",
+      calendarMonth: today.slice(0, 7),
+      modalReturnFocus: null,
+    };
+
+    const page = document.getElementById("page");
+    const nav = document.querySelector("nav");
+    const searchInput = document.getElementById("global-search");
+    const searchResults = document.getElementById("search-results");
+    const modalRoot = document.getElementById("modal-root");
+
+    const courseFor = (id) => courses.find((course) => course.id === id);
+    const weeklyStart = dateOrdinal(today) - ((new Date().getDay() + 6) % 7);
+    const completedSessions = sessions.filter((session) => session.status === "Completed");
+    const weeklySessions = completedSessions.filter((session) => {
+      const ordinal = dateOrdinal(session.date);
+      return ordinal >= weeklyStart && ordinal <= dateOrdinal(today);
+    });
+    const weeklyMinutes = weeklySessions.reduce((sum, session) => sum + session.minutes, 0);
+    const weeklyGoal = 600;
+
+    function allCalendarItems() {
+      return [
+        ...events.map((item) => ({ ...item, kind: "Event" })),
+        ...assignments.map((item) => ({ id: "cal-" + item.id, sourceId: item.id, courseId: item.courseId, title: item.title, date: item.due, type: "Assignment", kind: "Assignment" })),
+        ...assessments.map((item) => ({ id: "cal-" + item.id, sourceId: item.id, courseId: item.courseId, title: item.title, date: item.due, type: "Assessment", kind: "Assessment" })),
+        ...readings.map((item) => ({ id: "cal-" + item.id, sourceId: item.id, courseId: item.courseId, title: item.title, date: item.classDate, type: "Reading", kind: "Reading" })),
+        ...exams.map((item) => ({ id: "cal-" + item.id, sourceId: item.id, courseId: item.courseId, title: courseFor(item.courseId).name + " exam", date: item.date, type: "Exam", kind: "Exam" })),
+        ...sessions.map((item) => ({ id: "cal-" + item.id, sourceId: item.id, courseId: item.courseId, title: item.activity, date: item.date, type: "Study", kind: "Study session" })),
+      ];
+    }
+
+    function deadlineStatus(item) {
+      if (item.status === "complete" || item.status === "Graded") return "complete";
+      return daysBetween(today, item.due) < 0 ? "overdue" : "upcoming";
+    }
+
+    function renderNav() {
+      nav.innerHTML = navItems.map(([id, label, icon]) => `
+        <button type="button" data-view="${id}" class="${state.view === id ? "active" : ""}" ${state.view === id ? 'aria-current="page"' : ""}>
+          <span aria-hidden="true">${icon}</span>${label}
+        </button>
+      `).join("");
+    }
+
+    function pageHead(eyebrow, title, copy, action = "") {
+      return `<header class="page-head"><div><span class="eyebrow">${escapeHtml(eyebrow)}</span><h1>${escapeHtml(title)}</h1><p>${escapeHtml(copy)}</p></div>${action}</header>`;
+    }
+
+    function priorityData() {
+      const deadlines = assignments
+        .filter((item) => item.status !== "complete")
+        .sort((a, b) => a.due.localeCompare(b.due))
+        .map((item) => ({
+          kind: "Assignment",
+          id: item.id,
+          title: item.title,
+          courseId: item.courseId,
+          meta: deadlineStatus(item) === "overdue" ? "Overdue · " + formatDate(item.due) : "Due " + formatDate(item.due),
+        }));
+      const queue = readings
+        .filter((item) => item.status !== "Complete")
+        .sort((a, b) => a.classDate.localeCompare(b.classDate))
+        .map((item) => ({
+          kind: "Reading",
+          id: item.id,
+          title: item.title,
+          courseId: item.courseId,
+          meta: item.pages + " pages · " + item.status,
+        }));
+      return [...deadlines.slice(0, 2), ...queue].slice(0, 3);
+    }
+
+    function priorityRows(items) {
+      return items.map((item) => {
+        const course = courseFor(item.courseId);
+        return `<button type="button" class="detail-trigger" data-detail-kind="${item.kind}" data-detail-id="${item.id}">
+          <i style="background:${course?.colour || "#8a8a8a"}"></i>
+          <span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(course?.name || "General")} · ${escapeHtml(item.meta)}</small></span>
+          <em>Inspect →</em>
+        </button>`;
+      }).join("");
+    }
+
+    function overviewView() {
+      const priorities = priorityData();
+      const nextDeadline = assignments
+        .filter((item) => item.status !== "complete" && daysBetween(today, item.due) >= 0)
+        .sort((a, b) => a.due.localeCompare(b.due))[0];
+      const completeReadings = readings.filter((item) => item.status === "Complete").length;
+      const readingProgress = Math.round(completeReadings / readings.length * 100);
+      const nearestExam = exams.slice().sort((a, b) => a.date.localeCompare(b.date))[0];
+      const goalPercent = Math.min(100, Math.round(weeklyMinutes / weeklyGoal * 100));
+      const focus = priorities[0];
+      const focusCourse = focus && courseFor(focus.courseId);
+
+      return `
+        ${pageHead(formatDate(today, { weekday: "long", day: "numeric", month: "long" }), "A calm view of the week.", "Explore how fictional planner records connect across the dashboard.")}
+        <section class="focus-card">
+          <div><span class="eyebrow">Today’s Focus</span><h2>${escapeHtml(focus?.title || "No immediate priority")}</h2><p>${escapeHtml(focusCourse?.name || "Fictional workspace")} · ${escapeHtml(focus?.meta || "The priority list is clear.")}</p></div>
+          ${focus ? `<button type="button" data-detail-kind="${focus.kind}" data-detail-id="${focus.id}">Inspect priority →</button>` : ""}
+        </section>
+        <section class="summary-grid" aria-label="Planner summary">
+          <article class="summary-card"><small>Next deadline</small><strong>${escapeHtml(nextDeadline?.title || "Nothing scheduled")}</strong><em>${nextDeadline ? formatDate(nextDeadline.due) : "No upcoming deadline"}</em></article>
+          <article class="summary-card"><small>Reading progress</small><strong>${readingProgress}% complete</strong><em>${completeReadings} of ${readings.length} fictional readings</em></article>
+          <article class="summary-card"><small>Nearest exam</small><strong>${daysBetween(today, nearestExam.date)} days</strong><em>${escapeHtml(courseFor(nearestExam.courseId).name)}</em></article>
+          <article class="summary-card"><small>Weekly study goal</small><strong>${minutesLabel(weeklyMinutes)}</strong><em>${goalPercent}% of ${minutesLabel(weeklyGoal)}</em></article>
+        </section>
+        <div class="dashboard-grid">
+          <div>
+            <section class="panel">
+              <div class="panel-head"><h2>Weekly study pattern</h2><span class="panel-context">Calculated from completed fictional sessions</span></div>
+              <div class="chart-wrap"><canvas id="weekly-chart" aria-label="Study hours over the last seven days"></canvas></div>
+              <p id="weekly-chart-summary" class="visually-hidden"></p>
+            </section>
+            <section class="panel">
+              <div class="panel-head"><h2>Study by course</h2><span class="panel-context">Last seven days</span></div>
+              <div class="bar-list">${studyByCourseBars()}</div>
+            </section>
+          </div>
+          <div>
+            <section class="panel">
+              <div class="panel-head"><h2>Weekly goal progress</h2><span class="panel-context">Optional guide</span></div>
+              <div class="goal-layout">
+                <div class="goal-ring" role="progressbar" aria-label="Weekly study goal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${goalPercent}" style="background:conic-gradient(var(--burgundy) 0 ${goalPercent * 3.6}deg,#ece7de ${goalPercent * 3.6}deg 360deg)"><span><strong>${goalPercent}%</strong><small>this week</small></span></div>
+                <p>${minutesLabel(weeklyMinutes)} recorded from a fictional ${minutesLabel(weeklyGoal)} goal.</p>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="panel-head"><h2>Today’s priorities</h2><button class="text-button" type="button" data-view="today">Open Today</button></div>
+              <div class="priority-list">${priorityRows(priorities)}</div>
+            </section>
+          </div>
+        </div>
+      `;
+    }
+
+    function todayView() {
+      const priorities = priorityData();
+      const todayItems = allCalendarItems().filter((item) => item.date === today);
+      const todayStudy = sessions.filter((item) => item.date === today).reduce((sum, item) => sum + item.minutes, 0);
+      return `
+        ${pageHead("One day at a time", "Today", "A short fictional focus list and anything dated today.")}
+        <div class="two-column">
+          <section class="panel"><div class="panel-head"><h2>Top three priorities</h2><span class="panel-context">Read-only</span></div><div class="priority-list">${priorityRows(priorities)}</div></section>
+          <div>
+            <section class="panel"><div class="panel-head"><h2>Dated today</h2></div>${todayItems.length ? `<div class="record-list">${todayItems.map(calendarRecordRow).join("")}</div>` : `<div class="empty">No fictional items are dated today.</div>`}</section>
+            <section class="panel"><div class="panel-head"><h2>Study pulse</h2></div><div class="metric"><span>Recorded today</span><strong>${minutesLabel(todayStudy)}</strong><small>Calculated from fictional sessions.</small></div></section>
+          </div>
+        </div>
+      `;
+    }
+
+    function coursesView() {
+      return `
+        ${pageHead("Term structure", "Courses", "Four fictional courses connect assignments, readings, briefs, research, outlines, exams and study sessions.")}
+        <section class="course-grid">${courses.map((course) => {
+          const topics = outlineTopics.filter((topic) => topic.courseId === course.id);
+          const reviewed = topics.filter((topic) => topic.status === "Reviewed").length;
+          return `<button type="button" class="course-card" data-detail-kind="Course" data-detail-id="${course.id}">
+            <span class="accent" style="background:${course.colour}"></span><span class="eyebrow">${course.code}</span><h2>${escapeHtml(course.name)}</h2><p>${escapeHtml(course.meeting)} · ${escapeHtml(course.room)}</p>
+            <div class="stat-row"><span>${assignments.filter((item) => item.courseId === course.id).length} assignments</span><span>${readings.filter((item) => item.courseId === course.id).length} readings</span><span>${briefs.filter((item) => item.courseId === course.id).length} briefs</span><span>${reviewed}/${topics.length} topics reviewed</span></div>
+          </button>`;
+        }).join("")}</section>
+      `;
+    }
+
+    function assignmentsView() {
+      const combined = [
+        ...assignments.map((item) => ({ ...item, kind: "Assignment", displayStatus: deadlineStatus(item), weighting: "" })),
+        ...assessments.map((item) => ({ ...item, kind: "Assessment", displayStatus: deadlineStatus(item), weighting: item.weight + "%" })),
+      ].filter((item) => state.assignmentFilter === "All" || item.displayStatus === state.assignmentFilter);
+      return `
+        ${pageHead("Deadline workflow", "Assignments & assessments", "Inspect separate fictional assignment and weighted-assessment records.")}
+        <section class="panel">
+          <div class="filters"><label>Status<select id="assignment-filter"><option>All</option><option value="overdue">Overdue</option><option value="upcoming">Upcoming</option><option value="complete">Complete</option></select></label></div>
+          <div class="table-wrap"><table><thead><tr><th>Record</th><th>Course</th><th>Due</th><th>Status</th><th>Progress / weight</th></tr></thead><tbody>
+            ${combined.map((item) => `<tr><td><button type="button" data-detail-kind="${item.kind}" data-detail-id="${item.id}">${escapeHtml(item.title)}</button></td><td>${escapeHtml(courseFor(item.courseId)?.name)}</td><td>${formatDate(item.due)}</td><td><span class="status ${item.displayStatus}">${escapeHtml(item.displayStatus)}</span></td><td>${item.kind === "Assignment" ? escapeHtml(item.subtasks) + " subtasks" : escapeHtml(item.weighting)}</td></tr>`).join("")}
+          </tbody></table></div>
+        </section>
+      `;
+    }
+
+    function readingView() {
+      const visible = readings.filter((item) => state.readingFilter === "All" || item.status === state.readingFilter);
+      return `
+        ${pageHead("Before class", "Reading Queue", "Filter fictional readings without changing their saved status.")}
+        <section class="panel">
+          <div class="filters"><label>Reading status<select id="reading-filter"><option>All</option><option>Queued</option><option>Reading</option><option>Complete</option></select></label></div>
+          <div class="table-wrap"><table><thead><tr><th>Reading</th><th>Course</th><th>Type</th><th>Pages</th><th>Class date</th><th>Status</th></tr></thead><tbody>
+            ${visible.map((item) => `<tr><td><button type="button" data-detail-kind="Reading" data-detail-id="${item.id}">${escapeHtml(item.title)}</button></td><td>${escapeHtml(courseFor(item.courseId).name)}</td><td>${escapeHtml(item.type)}</td><td>${item.pages}</td><td>${formatDate(item.classDate)}</td><td><span class="status ${item.status.toLowerCase().replace(" ", "-")}">${escapeHtml(item.status)} · ${item.progress}%</span></td></tr>`).join("")}
+          </tbody></table></div>
+        </section>
+      `;
+    }
+
+    function legalView() {
+      return `
+        ${pageHead("Structured legal study", "Case Briefs", "Inspect fictional case-brief structures, neutral authority metadata and research trails.")}
+        <div class="workspace-tabs" role="tablist" aria-label="Legal demo sections">
+          <button type="button" role="tab" data-legal-tab="briefs" aria-selected="${state.legalTab === "briefs"}">IRAC / FIRAC briefs</button>
+          <button type="button" role="tab" data-legal-tab="authorities" aria-selected="${state.legalTab === "authorities"}">Authorities</button>
+          <button type="button" role="tab" data-legal-tab="research" aria-selected="${state.legalTab === "research"}">Research log</button>
+        </div>
+        ${legalTabContent()}
+      `;
+    }
+
+    function legalTabContent() {
+      if (state.legalTab === "authorities") {
+        return `<section class="brief-grid">${authorities.map((item) => `<button type="button" class="brief-card" data-detail-kind="Authority" data-detail-id="${item.id}"><span class="eyebrow">${escapeHtml(item.type)}</span><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.note)}</p><span class="status ${item.status === "Needs review" ? "needs-review" : "reviewed"}">${escapeHtml(item.status)}</span></button>`).join("")}</section>`;
+      }
+      if (state.legalTab === "research") {
+        return `<section class="brief-grid">${research.map((item) => `<button type="button" class="brief-card" data-detail-kind="Research" data-detail-id="${item.id}"><span class="eyebrow">${formatDate(item.date)}</span><h2>${escapeHtml(item.question)}</h2><p>${escapeHtml(item.source)} · ${escapeHtml(item.terms)}</p><span class="chip">${escapeHtml(courseFor(item.courseId).name)}</span></button>`).join("")}</section>`;
+      }
+      return `<section class="brief-grid">${briefs.map((item) => `<button type="button" class="brief-card" data-detail-kind="Case brief" data-detail-id="${item.id}"><span class="eyebrow">${escapeHtml(item.structure)} · ${escapeHtml(item.status)}</span><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.citation)} · ${escapeHtml(courseFor(item.courseId).name)}</p><span class="chip">Inspect fictional structure</span></button>`).join("")}</section>`;
+    }
+
+    function outlinesView() {
+      return `
+        ${pageHead("Course → topic → review", "Outlines", "Review status and confidence are calculated from fictional course topics.")}
+        <section class="outline-grid">${courses.map((course) => {
+          const topics = outlineTopics.filter((topic) => topic.courseId === course.id);
+          const reviewed = topics.filter((topic) => topic.status === "Reviewed").length;
+          return `<article class="outline-card"><div class="panel-head"><h2>${escapeHtml(course.name)}</h2><span class="panel-context">${reviewed}/${topics.length} reviewed</span></div>${topics.map((topic) => `<button type="button" class="detail-trigger topic-row" data-detail-kind="Outline topic" data-detail-id="${topic.id}"><span><strong>${escapeHtml(topic.title)}</strong><small>${escapeHtml(topic.status)} · confidence: ${escapeHtml(topic.confidence)}</small></span><em>Inspect →</em></button>`).join("")}</article>`;
+        }).join("")}</section>
+      `;
+    }
+
+    function studyView() {
+      const activities = [...new Set(sessions.map((item) => item.activity))];
+      const visible = sessions.filter((item) =>
+        (state.studyCourse === "All" || item.courseId === state.studyCourse)
+        && (state.studyActivity === "All" || item.activity === state.studyActivity)
+      ).sort((a, b) => b.date.localeCompare(a.date));
+      const filteredMinutes = visible.reduce((sum, item) => sum + item.minutes, 0);
+      const todayMinutes = sessions.filter((item) => item.date === today).reduce((sum, item) => sum + item.minutes, 0);
+      return `
+        ${pageHead("Connected study evidence", "Study Hub", "Explore completed fictional sessions and calculated analytics. Timer and saving controls are deliberately absent.")}
+        <section class="study-summary">
+          <article class="metric"><span>Today</span><strong>${minutesLabel(todayMinutes)}</strong><small>Completed fictional sessions</small></article>
+          <article class="metric"><span>This week</span><strong>${minutesLabel(weeklyMinutes)}</strong><small>Monday through today</small></article>
+          <article class="metric"><span>Filtered total</span><strong>${minutesLabel(filteredMinutes)}</strong><small>${visible.length} sessions shown</small></article>
+        </section>
+        <section class="panel">
+          <div class="filters">
+            <label>Course<select id="study-course"><option>All</option>${courses.map((course) => `<option value="${course.id}">${escapeHtml(course.name)}</option>`).join("")}</select></label>
+            <label>Activity<select id="study-activity"><option>All</option>${activities.map((activity) => `<option>${escapeHtml(activity)}</option>`).join("")}</select></label>
+          </div>
+          <div class="record-list">${visible.map((item) => `<button type="button" class="detail-trigger" data-detail-kind="Study session" data-detail-id="${item.id}"><i style="background:${courseFor(item.courseId).colour}"></i><span><strong>${escapeHtml(item.activity)}</strong><small>${escapeHtml(courseFor(item.courseId).name)} · ${formatDate(item.date)}</small></span><em>${item.minutes}m</em></button>`).join("")}</div>
+        </section>
+        <section class="panel"><div class="panel-head"><h2>Exam countdowns</h2><span class="panel-context">Fictional dates</span></div><div class="record-list">${exams.map((item) => `<button type="button" class="detail-trigger" data-detail-kind="Exam" data-detail-id="${item.id}"><i style="background:${courseFor(item.courseId).colour}"></i><span><strong>${escapeHtml(courseFor(item.courseId).name)}</strong><small>${formatDate(item.date)} · ${item.pastPapersDone}/${item.pastPapersTotal} past papers</small></span><em>${daysBetween(today, item.date)} days</em></button>`).join("")}</div></section>
+      `;
+    }
+
+    function calendarView() {
+      const monthStart = new Date(state.calendarMonth + "-01T12:00:00");
+      const leading = (monthStart.getDay() + 6) % 7;
+      const dates = Array.from({ length: 42 }, (_, index) => {
+        const date = new Date(monthStart);
+        date.setDate(index - leading + 1);
+        return localDate(date);
+      });
+      const items = allCalendarItems();
+      const upcoming = items.filter((item) => item.date >= today).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 10);
+      return `
+        ${pageHead("Month and agenda", "Calendar", "Navigate months and inspect dated fictional records. Date creation is not included in this public demo.")}
+        <div class="calendar-layout">
+          <section class="panel">
+            <div class="panel-head"><h2>${formatDate(state.calendarMonth + "-01", { month: "long", year: "numeric" })}</h2><div class="calendar-head"><button type="button" data-calendar-move="-1" aria-label="Previous month">←</button><button type="button" id="calendar-today">Today</button><button type="button" data-calendar-move="1" aria-label="Next month">→</button></div></div>
+            <div class="weekdays">${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => `<span>${day}</span>`).join("")}</div>
+            <div class="month-grid">${dates.map((date) => {
+              const dayItems = items.filter((item) => item.date === date);
+              return `<div class="calendar-day ${date.slice(0, 7) === state.calendarMonth ? "" : "outside"} ${date === today ? "today" : ""}"><strong>${Number(date.slice(8))}</strong>${dayItems.map((item) => `<button type="button" class="calendar-item" data-detail-kind="${item.kind}" data-detail-id="${item.sourceId || item.id}" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</button>`).join("")}</div>`;
+            }).join("")}</div>
+          </section>
+          <section class="panel"><div class="panel-head"><h2>Upcoming agenda</h2></div><div class="agenda">${upcoming.map((item) => `<button type="button" data-detail-kind="${item.kind}" data-detail-id="${item.sourceId || item.id}"><time datetime="${item.date}">${formatDate(item.date)}</time><span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.type)} · ${escapeHtml(courseFor(item.courseId)?.name || "General")}</small></span></button>`).join("")}</div></section>
+        </div>
+      `;
+    }
+
+    function notesView() {
+      return `
+        ${pageHead("Fictional notes", "Notes", "Inspect short demonstration notes. The public demo has no field for entering personal information.")}
+        <section class="note-grid">${notes.map((item) => `<button type="button" class="note-card" data-detail-kind="Note" data-detail-id="${item.id}"><span class="eyebrow">${escapeHtml(courseFor(item.courseId)?.name || "General")}</span><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.body)}</p><span class="chip">Updated ${formatDate(item.updated)}</span></button>`).join("")}</section>
+      `;
+    }
+
+    function aboutView() {
+      return `
+        ${pageHead("Product boundaries", "About this demo", "What this public preview shows—and what remains exclusive to the purchased planner.")}
+        <section class="about-grid">
+          <article class="panel"><h2>About the records</h2><p>Every course, assignment, authority, note, activity and result in this demo is fictional. Neutral authority labels demonstrate organisation only; they are not legal advice or verified law.</p></article>
+          <article class="panel"><h2>Read-only by design</h2><p>This public page contains no record creation, editing, deletion, completion, timer saving, upload, backup, restore or buyer storage functionality. Refreshing returns the same fictional dataset.</p></article>
+          <article class="panel"><h2>The purchased planner</h2><ul><li>Opens with an empty writable workspace.</li><li>Stores records locally in the buyer’s browser.</li><li>Includes manual JSON backup and restore.</li><li>Has no automatic cloud synchronization.</li></ul></article>
+          <article class="panel"><h2>Use and support</h2><ul><li>Desktop and laptop use is intended.</li><li>Phone support is not advertised.</li><li>No account is needed for this demo.</li><li>Bench &amp; Brief does not provide legal advice.</li></ul></article>
+          <article class="cta"><h2>Ready to organise your own semester?</h2><p>Get the full writable Bench &amp; Brief planner.</p>${ETSY_LISTING_URL ? `<a class="primary" href="${escapeHtml(ETSY_LISTING_URL)}" rel="noopener">View the Etsy listing</a>` : `<button type="button" disabled>Purchase link coming soon</button>`}</article>
+        </section>
+      `;
+    }
+
+    function studyByCourseBars() {
+      const totals = courses.map((course) => ({
+        course,
+        minutes: weeklySessions.filter((session) => session.courseId === course.id).reduce((sum, item) => sum + item.minutes, 0),
+      }));
+      const maximum = Math.max(...totals.map((item) => item.minutes), 1);
+      return totals.map(({ course, minutes }) => `<div class="bar-row"><span title="${escapeHtml(course.name)}">${escapeHtml(course.name)}</span><div class="bar-track"><i style="width:${minutes / maximum * 100}%;background:${course.colour}"></i></div><strong>${(minutes / 60).toFixed(1)}h</strong></div>`).join("");
+    }
+
+    function calendarRecordRow(item) {
+      return `<button type="button" class="detail-trigger" data-detail-kind="${item.kind}" data-detail-id="${item.sourceId || item.id}"><i style="background:${courseFor(item.courseId)?.colour || "#8a8a8a"}"></i><span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.type)} · ${escapeHtml(courseFor(item.courseId)?.name || "General")}</small></span><em>Inspect →</em></button>`;
+    }
+
+    function drawWeeklyChart() {
+      const canvas = document.getElementById("weekly-chart");
+      if (!canvas) return;
+      const dates = Array.from({ length: 7 }, (_, index) => fromOffset(index - 6));
+      const values = dates.map((date) => completedSessions.filter((session) => session.date === date).reduce((sum, item) => sum + item.minutes / 60, 0));
+      const labels = dates.map((date) => formatDate(date, { weekday: "short" }));
+      const summary = document.getElementById("weekly-chart-summary");
+      summary.textContent = labels.map((label, index) => label + ": " + values[index].toFixed(1) + " hours").join("; ");
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      const width = Math.max(500, rect.width);
+      const height = Math.max(220, rect.height);
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
+      const context = canvas.getContext("2d");
+      context.scale(ratio, ratio);
+      const pad = { left: 34, right: 14, top: 15, bottom: 31 };
+      const chartWidth = width - pad.left - pad.right;
+      const chartHeight = height - pad.top - pad.bottom;
+      const maximum = Math.max(...values, 1) * 1.2;
+      context.strokeStyle = "#e3ded6";
+      context.lineWidth = 1;
+      [0, 0.5, 1].forEach((part) => {
+        const y = pad.top + chartHeight * part;
+        context.beginPath();
+        context.moveTo(pad.left, y);
+        context.lineTo(width - pad.right, y);
+        context.stroke();
+      });
+      const points = values.map((value, index) => ({
+        x: pad.left + index * chartWidth / 6,
+        y: pad.top + chartHeight - value / maximum * chartHeight,
+      }));
+      const gradient = context.createLinearGradient(0, pad.top, 0, height - pad.bottom);
+      gradient.addColorStop(0, "rgba(150,61,74,.25)");
+      gradient.addColorStop(1, "rgba(150,61,74,0)");
+      context.beginPath();
+      context.moveTo(points[0].x, height - pad.bottom);
+      points.forEach((point) => context.lineTo(point.x, point.y));
+      context.lineTo(points.at(-1).x, height - pad.bottom);
+      context.closePath();
+      context.fillStyle = gradient;
+      context.fill();
+      context.beginPath();
+      points.forEach((point, index) => index ? context.lineTo(point.x, point.y) : context.moveTo(point.x, point.y));
+      context.strokeStyle = "#963d4a";
+      context.lineWidth = 2.5;
+      context.stroke();
+      context.fillStyle = "#687386";
+      context.font = "12px system-ui";
+      context.textAlign = "center";
+      labels.forEach((label, index) => context.fillText(label, points[index].x, height - 8));
+    }
+
+    function detailData(kind, id) {
+      const collections = {
+        "Course": courses,
+        "Assignment": assignments,
+        "Assessment": assessments,
+        "Reading": readings,
+        "Case brief": briefs,
+        "Authority": authorities,
+        "Research": research,
+        "Outline topic": outlineTopics,
+        "Study session": sessions,
+        "Exam": exams,
+        "Note": notes,
+        "Event": events,
+      };
+      return collections[kind]?.find((item) => item.id === id);
+    }
+
+    function openDetail(kind, id, trigger) {
+      const item = detailData(kind, id);
+      if (!item) return;
+      state.modalReturnFocus = trigger || document.activeElement;
+      const title = item.title || item.name || item.activity || (kind === "Exam" ? courseFor(item.courseId).name + " exam" : kind);
+      const excluded = new Set(["id", "title", "name", "courseId", "colour"]);
+      const fields = Object.entries(item).filter(([key, value]) => !excluded.has(key) && value !== undefined && value !== "");
+      modalRoot.innerHTML = `<div class="modal-backdrop" role="presentation"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title"><div class="modal-head"><div><span class="eyebrow">${escapeHtml(kind)} · fictional data</span><h2 id="detail-title">${escapeHtml(title)}</h2><p>${escapeHtml(courseFor(item.courseId)?.name || "General demo record")}</p></div><button type="button" id="close-modal" aria-label="Close details">×</button></div><p class="modal-message">This interactive demo is read-only. The purchased planner lets you add, edit and organise your own records.</p><dl>${fields.map(([key, value]) => `<dt>${escapeHtml(key.replace(/([A-Z])/g, " $1"))}</dt><dd>${key.toLowerCase().includes("date") || key === "due" || key === "updated" || key === "reviewed" ? formatDate(value) : escapeHtml(value)}</dd>`).join("")}</dl></section></div>`;
+      document.getElementById("close-modal").focus();
+    }
+
+    function closeModal() {
+      modalRoot.innerHTML = "";
+      state.modalReturnFocus?.focus();
+    }
+
+    function render() {
+      renderNav();
+      const views = {
+        overview: overviewView,
+        today: todayView,
+        courses: coursesView,
+        assignments: assignmentsView,
+        reading: readingView,
+        legal: legalView,
+        outlines: outlinesView,
+        study: studyView,
+        calendar: calendarView,
+        notes: notesView,
+        about: aboutView,
+      };
+      page.innerHTML = views[state.view]();
+      page.focus({ preventScroll: true });
+      bindPageControls();
+      if (state.view === "overview") requestAnimationFrame(drawWeeklyChart);
+    }
+
+    function setView(view) {
+      if (!navItems.some((item) => item[0] === view)) return;
+      state.view = view;
+      searchInput.value = "";
+      searchResults.hidden = true;
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function bindPageControls() {
+      document.querySelectorAll("[data-view]").forEach((button) => {
+        button.addEventListener("click", () => setView(button.dataset.view));
+      });
+      document.querySelectorAll("[data-detail-kind]").forEach((button) => {
+        button.addEventListener("click", () => openDetail(button.dataset.detailKind, button.dataset.detailId, button));
+      });
+      document.querySelectorAll("[data-legal-tab]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.legalTab = button.dataset.legalTab;
+          render();
+        });
+      });
+      const readingFilter = document.getElementById("reading-filter");
+      if (readingFilter) {
+        readingFilter.value = state.readingFilter;
+        readingFilter.addEventListener("change", () => {
+          state.readingFilter = readingFilter.value;
+          render();
+        });
+      }
+      const assignmentFilter = document.getElementById("assignment-filter");
+      if (assignmentFilter) {
+        assignmentFilter.value = state.assignmentFilter;
+        assignmentFilter.addEventListener("change", () => {
+          state.assignmentFilter = assignmentFilter.value;
+          render();
+        });
+      }
+      const studyCourse = document.getElementById("study-course");
+      if (studyCourse) {
+        studyCourse.value = state.studyCourse;
+        studyCourse.addEventListener("change", () => {
+          state.studyCourse = studyCourse.value;
+          render();
+        });
+      }
+      const studyActivity = document.getElementById("study-activity");
+      if (studyActivity) {
+        studyActivity.value = state.studyActivity;
+        studyActivity.addEventListener("change", () => {
+          state.studyActivity = studyActivity.value;
+          render();
+        });
+      }
+      document.querySelectorAll("[data-calendar-move]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const date = new Date(state.calendarMonth + "-01T12:00:00");
+          date.setMonth(date.getMonth() + Number(button.dataset.calendarMove));
+          state.calendarMonth = localDate(date).slice(0, 7);
+          render();
+        });
+      });
+      document.getElementById("calendar-today")?.addEventListener("click", () => {
+        state.calendarMonth = today.slice(0, 7);
+        render();
+      });
+    }
+
+    function searchableRecords() {
+      return [
+        ...courses.map((item) => ({ kind: "Course", id: item.id, title: item.name, meta: item.code, view: "courses" })),
+        ...assignments.map((item) => ({ kind: "Assignment", id: item.id, title: item.title, meta: courseFor(item.courseId).name, view: "assignments" })),
+        ...assessments.map((item) => ({ kind: "Assessment", id: item.id, title: item.title, meta: courseFor(item.courseId).name, view: "assignments" })),
+        ...readings.map((item) => ({ kind: "Reading", id: item.id, title: item.title, meta: courseFor(item.courseId).name, view: "reading" })),
+        ...briefs.map((item) => ({ kind: "Case brief", id: item.id, title: item.title, meta: courseFor(item.courseId).name, view: "legal" })),
+        ...authorities.map((item) => ({ kind: "Authority", id: item.id, title: item.title, meta: item.type, view: "legal" })),
+        ...research.map((item) => ({ kind: "Research", id: item.id, title: item.question, meta: item.source, view: "legal" })),
+        ...outlineTopics.map((item) => ({ kind: "Outline topic", id: item.id, title: item.title, meta: courseFor(item.courseId).name, view: "outlines" })),
+        ...sessions.map((item) => ({ kind: "Study session", id: item.id, title: item.activity, meta: courseFor(item.courseId).name + " · " + formatDate(item.date), view: "study" })),
+        ...notes.map((item) => ({ kind: "Note", id: item.id, title: item.title, meta: courseFor(item.courseId)?.name || "General", view: "notes" })),
+      ];
+    }
+
+    searchInput.addEventListener("input", () => {
+      const term = searchInput.value.trim().toLowerCase();
+      if (!term) {
+        searchResults.hidden = true;
+        return;
+      }
+      const results = searchableRecords().filter((item) => (item.title + " " + item.meta + " " + item.kind).toLowerCase().includes(term)).slice(0, 8);
+      searchResults.innerHTML = results.length
+        ? results.map((item) => `<button type="button" data-search-kind="${item.kind}" data-search-id="${item.id}" data-search-view="${item.view}"><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.kind)} · ${escapeHtml(item.meta)}</small></button>`).join("")
+        : `<div class="empty">No matching fictional records.</div>`;
+      searchResults.hidden = false;
+      searchResults.querySelectorAll("button").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.view = button.dataset.searchView;
+          if (button.dataset.searchKind === "Authority") state.legalTab = "authorities";
+          if (button.dataset.searchKind === "Research") state.legalTab = "research";
+          if (button.dataset.searchKind === "Case brief") state.legalTab = "briefs";
+          searchInput.value = "";
+          searchResults.hidden = true;
+          render();
+          const target = [...document.querySelectorAll("[data-detail-kind]")].find((item) => item.dataset.detailKind === button.dataset.searchKind && item.dataset.detailId === button.dataset.searchId);
+          openDetail(button.dataset.searchKind, button.dataset.searchId, target);
+        });
+      });
+    });
+
+    searchInput.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        searchInput.value = "";
+        searchResults.hidden = true;
+      }
+    });
+
+    modalRoot.addEventListener("click", (event) => {
+      if (event.target.id === "close-modal" || event.target.classList.contains("modal-backdrop")) closeModal();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && modalRoot.children.length) {
+        closeModal();
+        return;
+      }
+      if (event.key !== "Tab" || !modalRoot.children.length) return;
+      const modal = modalRoot.querySelector(".modal");
+      const focusable = [...modal.querySelectorAll('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')];
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable.at(-1);
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if (state.view === "overview") drawWeeklyChart();
+    });
+
+    render();
+  </script>
+</body>
+</html>
